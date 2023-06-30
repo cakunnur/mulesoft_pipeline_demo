@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="64fee42a-b4c1-4c43-ba52-76b5a0eaba58" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="ba277732-9856-491a-be2e-d0fab8dc9c2b" >
+		<http:request-connection host="${http.host}" port="${http.port}" />
+	</http:request-config>
+	<configuration-properties doc:name="Configuration properties" doc:id="9ca67ec7-e74f-47c2-b858-9d2a9be1544b" file="config\munit_demo-papi.yaml" />
+	<flow name="munit_demo_papiFlow" doc:id="fd247809-033f-43ac-94c6-c5f3114df474" >
+		<http:listener doc:name="Listener" doc:id="274e297e-482e-434f-8883-a7fb64e33ae6" config-ref="HTTP_Listener_config" path="/munitrequest"/>
+		<logger level="INFO" doc:name="Logger" doc:id="07f4429c-4b8e-4b22-8f28-cb9aa02ec55c" message="creating request for sapi"/>
+		<ee:transform doc:name="Transform Message" doc:id="9c40797e-438d-4596-83a4-a29dedf5d289" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firstname": attributes.queryParams.firstname ,
+	"lastname" : attributes.queryParams.lastname  ,
+	"country": attributes.queryParams.country
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="08558a6b-4a06-4c89-97fd-851968561b51" message="request to sapi- #[payload]"/>
+		<http:request method="POST" doc:name="Request" doc:id="4a6a49cd-b535-4e45-b5f6-25e41477ad35" config-ref="HTTP_Request_configuration" path="${http.apipath}">
+			<reconnect />
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="0c8a8151-a14d-4132-9cd1-9d2f58590596" message="response from sapi- #[payload]"/>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="fae308af-9903-4a57-b7ad-7c8973811d06" >
+				<ee:transform doc:name="Transform Message" doc:id="137a2f6f-4e7e-4333-a279-68780a5e860e" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+{
+	"result" : "error transaction is failed"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Logger" doc:id="667b917d-1fe2-4c56-88ff-26d52932c74f" message="#[error.description]"/>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<!-- <flow name="munit_untilsuccessful" doc:id="72ec472e-6c6f-4c5e-9c3f-71df7b529f67" >
+		<http:listener doc:name="Listener" doc:id="cb10353f-5de2-41a0-abaa-0bf0770b172a" config-ref="HTTP_Listener_config" path="/retryflow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="dde3cd16-3018-4cf5-910d-e3ed7d0c245f" message="#[payload]"/>
+		<ee:transform doc:name="Transform Message" doc:id="d45ca96d-09c0-452f-9818-4f8a08c5897f" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+-&#45;&#45;
+{
+	"Employee_Details" : payload.Name ++ "-" ++ payload.Age
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="name" ><![CDATA[%dw 2.0
+output application/json
+-&#45;&#45;
+payload.Name]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="de1a3ac6-f0eb-4fbd-8de9-e9299899ba82" message="#[payload]"/>
+		<until-successful maxRetries="3" doc:name="Until Successful" doc:id="eed37c5a-ec79-4dab-af2b-ca45a00f2f95" millisBetweenRetries="3000">
+			<http:request method="POST" doc:name="Request" doc:id="ffcd29d6-c640-439d-bf9f-0d1d20f50823" config-ref="HTTP_Request_configuration" path="${http.apipath}"/>
+		</until-successful>
+		<logger level="INFO" doc:name="Logger" doc:id="38e8bbe2-04c3-4df5-8f34-1059bd10ab6b" message="response: #[payload]"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="4d6e490a-8930-4657-8e38-164bebf8877a" >
+				<ee:transform doc:name="Transform Message" doc:id="061715ac-173d-4cfd-8dd7-d48a69edb11f" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+-&#45;&#45;
+{ 
+	"Error": "transaction failed"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow> -->
+</mule>

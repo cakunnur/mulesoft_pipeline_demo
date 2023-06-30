@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="munit_demo_papi-test-suite.xml" />
+	<munit:test name="munit_demo_papi-test-suite-munit_demo_papiFlowTest" doc:id="b939a518-7d67-44b5-97bc-d5dfba1ca696" description="Test">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="5347cf92-fe18-4af4-9204-669b582f1330" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4a6a49cd-b535-4e45-b5f6-25e41477ad35" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value='#[output application/json --- readUrl("classpath://test-inputs/http_response.json")]' />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="8e57b874-937c-4f8b-b12f-871088ce6d4a" >
+				<munit:attributes value="#['queryParams': {&quot;firstname&quot; : 'Chaitra' ,&#10;	&quot;lastname&quot; : 'Rao'  ,&#10;	&quot;country&quot;: 'IN'}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to munit_demo_papiFlow" doc:id="a8363730-0426-46f8-a273-40f18b2150fb" name="munit_demo_papiFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="85109406-04fa-4eb8-afb5-080d2ed48bdc" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.status must contain ("isActive")]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="munit_demo_papi-test-suite-HTTP:CONNECTIVITY" doc:id="0b333d3f-d37b-4915-be25-2633c92d24eb" description="Test" expectedErrorType="HTTP:CONNECTIVITY">
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock when" doc:id="da12a1d9-0ea6-4e64-be92-f5f314f17b13" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4a6a49cd-b535-4e45-b5f6-25e41477ad35" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="40c0c5bb-8477-4b8f-be9e-494613a6f917" >
+				<munit:attributes value="#['queryParams': {&quot;firstname&quot; : 'Chaitra' ,&#10;	&quot;lastname&quot; : 'Rao'  ,&#10;	&quot;country&quot;: 'IN'}]" />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to munit_demo_papiFlow" doc:id="c1b26924-3520-4e50-9910-c310dc977314" name="munit_demo_papiFlow"/>
+		</munit:execution>
+	</munit:test>
+	<munit:test name="munit_demo_papi-test-suite-munit_untilsuccessfulTest" doc:id="241ac77d-4c46-41a1-b2ee-47e03c527d7d" description="Test" ignore="true">
+		<munit:behavior >
+			<munit-tools:spy doc:name="Spy" doc:id="2fc1495d-d413-4ded-ac94-4ea54cb2313a" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+					<munit-tools:with-attribute whereValue="d45ca96d-09c0-452f-9818-4f8a08c5897f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<logger level="INFO" doc:name="Logger" doc:id="66772879-b6fa-45b7-ae24-7e497a63c322" message="#[vars.name]"/>
+					<munit-tools:assert doc:name="Assert expression" doc:id="73383ba4-831b-4b18-a6aa-eeda9aaa432a" >
+						<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+vars.name must beNull()]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<logger level="INFO" doc:name="Logger" doc:id="005142a5-32e4-4fe5-9ecd-777f176ccf9f" message="#[vars.name]"/>
+					<munit-tools:assert doc:name="Assert expression" doc:id="7889e89c-d2d0-4479-81e4-6f13d3973557" >
+						<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+vars.name must notBeNull()]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:mock-when doc:name="Mock when" doc:id="736f5e8d-e114-44db-9270-ff013c63846e" processor="http:request">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ffcd29d6-c640-439d-bf9f-0d1d20f50823" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:error typeId="HTTP:CONNECTIVITY" />
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+		</munit:behavior>
+		<munit:execution >
+			<munit:set-event doc:name="Set Event" doc:id="01155500-3867-43cd-bac6-83baa8a52710" >
+				<munit:payload value='#[output application/json --- readUrl("classpath://test-inputs/inputPayload.json")]' />
+			</munit:set-event>
+			<flow-ref doc:name="Flow-ref to munit_untilsuccessful" doc:id="9a242d98-95f8-4d42-89f6-9f5614848a96" name="munit_untilsuccessful"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert expression" doc:id="ca2ec81e-1af0-48ca-830d-68a5c83f8232" >
+				<munit-tools:that ><![CDATA[#[import * from dw::test::Asserts 
+ ---
+payload.Error must contain ("failed")]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify call" doc:id="4cd2a1a9-3f26-493a-84a0-da3b628f169f" processor="http:request" times="4">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ffcd29d6-c640-439d-bf9f-0d1d20f50823" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
