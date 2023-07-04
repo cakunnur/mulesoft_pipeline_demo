@@ -17,7 +17,7 @@
 		<mule.maven.plugin.version>3.5.4</mule.maven.plugin.version>
 		<munit.version>2.3.9</munit.version>
 	</properties>
-
+	
 	<build>
 		<plugins>
 			<plugin>

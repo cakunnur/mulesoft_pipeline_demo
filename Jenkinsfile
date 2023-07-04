@@ -6,6 +6,7 @@ pipeline {
     DEPLOY_CREDS = credentials('anypoint.credential')
     MULE_VERSION = '4.4.0'
     WORKER = "Micro"
+    M2SETTINGS = "C:\\Users\\cakunnur\\.m2\\settings.xml"
   }
   stages {
     stage('Build') {
@@ -26,7 +27,7 @@ pipeline {
         APP_NAME = 'munit-pipeline-papi'
       }
       steps {
-            bat 'mvn package -DskipTests deploy -DmuleDeploy -Dmule.version="%MULE_VERSION%" -Danypoint.username="%DEPLOY_CREDS_USR%" -Danypoint.password="%DEPLOY_CREDS_PSW%" -Dcloudhub.app="%APP_NAME%" -Dcloudhub.environment="%ENVIRONMENT%" -Dcloudhub.worker="%WORKER%"'
+            bat 'mvn -U -V -e -B -gs %M2SETTINGS% -DskipTests deploy -DmuleDeploy -Dmule.version="%MULE_VERSION%" -Danypoint.username="%DEPLOY_CREDS_USR%" -Danypoint.password="%DEPLOY_CREDS_PSW%" -Dcloudhub.app="%APP_NAME%" -Dcloudhub.environment="%ENVIRONMENT%" -Dcloudhub.worker="%WORKER%"'
       }
     }
     }
